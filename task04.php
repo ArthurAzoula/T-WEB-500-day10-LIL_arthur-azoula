@@ -24,18 +24,34 @@ if (empty($type)) {
 // Check if the type parameter has less than 3 characters or above 10 characters
 if (strlen($type) < 3) {
     http_response_code(400);
-    echo json_encode(['error' => 'Type parameter has less than 3 characters']);
+    echo json_encode(['error' => "$type : this type does not have enough characters"]);
     exit;
 } else if (strlen($type) > 10) {
     http_response_code(400);
-    echo json_encode(['error' => 'Type parameter has more than 10 characters']);
+    echo json_encode(['error' => "$type : this type has too many characters."]);
     exit;
 }
 
 // Check if the type parameter contains non-alphabetical characters (except '-')
 if (!preg_match('/^[a-zA-Z\-]+$/', $type)) {
     http_response_code(400);
-    echo json_encode(['error' => "this type has non-alphabetical characters (different from '-')."]);
+    echo json_encode(['error' => "$type : this type has non-alphabetical characters (different from '-')."]);
+    exit;
+}
+
+// Case where the type doesn't exist
+$query = <<<SQL
+    SELECT * FROM ajax_products.products WHERE type = :type
+SQL;
+
+$statement = $conn->prepare($query);
+$statement->bindValue(':type', $type);
+
+$statement->execute();
+
+if($statement->rowCount() === 0) {
+    http_response_code(400);
+    echo json_encode(['error' => "$type : This type doesn't exist."]);
     exit;
 }
 
@@ -49,18 +65,18 @@ if (empty($brand)) {
 // Check if the brand parameter has less than 3 characters
 if (strlen($brand) < 3) {
     http_response_code(400);
-    echo json_encode(['error' => 'Brand parameter has less than 3 characters']);
+    echo json_encode(['error' => "$brand : this brand does not have enough characters"]);
     exit;
 } else if (strlen($brand) > 20) {
     http_response_code(400);
-    echo json_encode(['error' => 'Brand parameter has more than 20 characters']);
+    echo json_encode(['error' => "$brand : this brand has too many characters."]);
     exit;
 }
 
 // brand allows alphanumeric characters, - and &
 if (!preg_match('/^[a-zA-Z0-9\-&]+$/', $brand)) {
     http_response_code(400);
-    echo json_encode(['error' => 'Brand parameter has invalid characters']);
+    echo json_encode(['error' => "$brand : this brand has invalid characters"]);
     exit;}
 
 $query = <<<SQL
