@@ -34,24 +34,19 @@
         document.querySelector('form').addEventListener('submit', (event) => {
             event.preventDefault();
             const name = document.getElementById('texte_name').value;
-            const response = fetch('task01.php', {
-                method: 'POST',
+            const response = fetch(`task01.php?name=${name}`, {
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    name: name
-                })
+                }
             })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert(data.name)
                         document.getElementById('data').innerHTML = data.name;
                         document.getElementById('data').classList.add('alert-success');
                         document.getElementById('data').classList.remove('alert-danger');
                     } else {
-                        alert(data.error);
                         document.getElementById('data').innerHTML = data.error;
                         document.getElementById('data').classList.add('alert-danger');
                         document.getElementById('data').classList.remove('alert-success');

@@ -2,14 +2,12 @@
 
 header('Content-Type: application/json');
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     echo json_encode(['error' => 'An error occured : Method not allowed']);
     exit;
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
-
-$name = $data['name'] ?? null;
+$name = $_GET['name'] ?? null;
 
 if (!$name) {
     echo json_encode(['error' => 'An error occured : Name parameter is missing']);
