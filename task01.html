@@ -23,39 +23,39 @@
         </form>
         <p class="mt-4">Receiving data :</p>
         <div class="alert mt-5" id="data" role="alert">
-            
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
-        integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
-        crossorigin="anonymous"></script>
+        </div>
 
-    <script>
-        document.querySelector('form').addEventListener('submit', (event) => {
-            event.preventDefault();
-            const name = document.getElementById('texte_name').value;
-            const response = fetch(`task01.php?name=${name}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('data').innerHTML = data.name;
-                        document.getElementById('data').classList.add('alert-success');
-                        document.getElementById('data').classList.remove('alert-danger');
-                    } else {
-                        document.getElementById('data').innerHTML = data.error;
-                        document.getElementById('data').classList.add('alert-danger');
-                        document.getElementById('data').classList.remove('alert-success');
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+            integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
+            crossorigin="anonymous"></script>
+
+        <script>
+            document.querySelector('form').addEventListener('submit', (event) => {
+                event.preventDefault();
+                const name = document.getElementById('texte_name').value;
+                const response = fetch(`task01.php?name=${name}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
                     }
-                });
-        });
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('data').innerHTML = data.name;
+                            document.getElementById('data').classList.add('alert-success');
+                            document.getElementById('data').classList.remove('alert-danger');
+                        } else {
+                            document.getElementById('data').innerHTML = data.error;
+                            document.getElementById('data').classList.add('alert-danger');
+                            document.getElementById('data').classList.remove('alert-success');
+                        }
+                    });
+            });
 
 
-    </script>
+        </script>
 
 
 </body>
