@@ -38,12 +38,12 @@
                     .then(data => {
                         Object.keys(data).forEach(country_code => {
                             const tr = document.createElement('tr');
-                            const tdcountryname = document.createElement('td');
                             const tdcountrycode = document.createElement('td');
-                            tdcountryname.textContent = country_code;
-                            tdcountrycode.textContent = data[country_code];
-                            tr.appendChild(tdcountryname);
+                            const tdcountryname = document.createElement('td');
+                            tdcountryname.textContent = data[country_code];
+                            tdcountrycode.textContent = country_code;
                             tr.appendChild(tdcountrycode);
+                            tr.appendChild(tdcountryname);
                             tablebody.appendChild(tr);
                             btn.disabled = true;
                             btn.innerHTML = "Data loaded, button disabled";
