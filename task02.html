@@ -46,12 +46,10 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            alert('Valid email : ' + data.email)
                             document.getElementById('data').innerHTML = data.email;
                             document.getElementById('data').classList.add('alert-success');
                             document.getElementById('data').classList.remove('alert-danger');
                         } else {
-                            alert(data.error);
                             document.getElementById('data').innerHTML = data.error;
                             document.getElementById('data').classList.add('alert-danger');
                             document.getElementById('data').classList.remove('alert-success');
