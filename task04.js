@@ -14,6 +14,11 @@ const resultat = document.querySelector('#resultat');
 const ultype = document.querySelector('#check_type');
 const ulbrand = document.querySelector('#check_brand');
 
+const submitbutton = document.querySelector('div button');
+
+let isTypeValid = false;
+let isBrandValid = false;
+
 type.addEventListener('keyup', (e) => {
     let typeValue = e.currentTarget.value;
     typeValue = typeValue.trim();
@@ -43,6 +48,12 @@ type.addEventListener('keyup', (e) => {
     } else {
         ultype.children[2].classList.remove('text-danger');
         ultype.children[2].classList.add('text-success');
+    }
+
+    if (typeError.includes(TYPE_NOT_ENOUGHT_CHARACTERS) || typeError.includes(TYPE_TOO_MANY_CHARACTERS) || typeError.includes(TYPE_NON_ALPHABETICAL_CHARACTERS)) {
+        isTypeValid = false;
+    } else {
+        isTypeValid = true;
     }
 
 });
@@ -78,6 +89,12 @@ brand.addEventListener('keyup', (e) => {
         ulbrand.children[2].classList.add('text-success');
     }
 
+    if (brandError.includes(BRAND_NOT_ENOUGHT_CHARACTERS) || brandError.includes(BRAND_TOO_MANY_CHARACTERS) || brandError.includes(BRAND_INVALID_CHARACTERS)) {
+        isBrandValid = false;
+    } else {
+        isBrandValid = true;
+    }
+
     
 });
 
@@ -111,30 +128,37 @@ const checkBrand = (brandValue) => {
 
 form.addEventListener('submit', (e) => {
     e.preventDefault();
-    fetch(`task04.php?type=${type.value}&brand=${brand.value}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-        .then(response => response.json())
-        .then(result => {
-            if (result.success) {
-                resultat.textContent = 'Your data is valid';
-                resultat.classList.remove('alert-danger');
-                resultat.classList.add('alert-success');
-                resultat.classList.add('text-white');
-                brand.value = '';
-                type.value = '';
-                ulbrand.classList.add('d-none');
-                ultype.classList.add('d-none');
-            } else {
-                resultat.textContent = result.error;
-                resultat.classList.remove('alert-success');
-                resultat.classList.add('alert-danger');
-                resultat.classList.add('text-white');
-            } 
+    if (isTypeValid && isBrandValid) {
+        fetch(`task04.php?type=${type.value}&brand=${brand.value}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    resultat.textContent = 'Your data is valid';
+                    resultat.classList.remove('alert-danger');
+                    resultat.classList.add('alert-success');
+                    resultat.classList.add('text-white');
+                    brand.value = '';
+                    type.value = '';
+                    ulbrand.classList.add('d-none');
+                    ultype.classList.add('d-none');
+                } else {
+                    resultat.textContent = result.error;
+                    resultat.classList.remove('alert-success');
+                    resultat.classList.add('alert-danger');
+                    resultat.classList.add('text-white');
+                }
 
-    })
+            })
+    } else {
+        resultat.textContent = 'Your data is invalid, please check your inputs';
+        resultat.classList.remove('alert-success');
+        resultat.classList.add('alert-danger');
+        resultat.classList.add('text-white');
+    }
 });
 

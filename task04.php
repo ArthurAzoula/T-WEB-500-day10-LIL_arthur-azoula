@@ -62,8 +62,8 @@ if (empty($brand)) {
     exit;
 }
 
-// Check if the brand parameter has less than 3 characters
-if (strlen($brand) < 3) {
+// Check if the brand parameter has less than 2 characters
+if (strlen($brand) < 2) {
     http_response_code(400);
     echo json_encode(['error' => "$brand : this brand does not have enough characters"]);
     exit;

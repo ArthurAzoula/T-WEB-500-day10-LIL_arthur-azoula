@@ -98,22 +98,7 @@ if (!preg_match('/^[0-9]+$/', $number)) {
     exit;
 }
 
-
-// This type doesn't exist in our shpp
-$query = <<<SQL
-    SELECT * FROM ajax_products.products WHERE type = :type
-SQL;
-
-$statement = $conn->prepare($query);
-$statement->bindValue(':type', $type);
-
-$statement->execute();
-
-if ($statement->rowCount() === 0) {
-    http_response_code(400);
-    echo json_encode(['error' => "$type : This type doesn't exist."]);
-    exit;
-}
+/* Query parts for find product */
 
 // This brand doesn't exist in our shop
 $query = <<<SQL
@@ -131,17 +116,39 @@ if ($statement->rowCount() === 0) {
     exit;
 }
 
+
+// This type doesn't exist in our shpp
+$query = <<<SQL
+    SELECT * FROM ajax_products.products WHERE type = :type and brand = :brand
+SQL;
+
+$statement = $conn->prepare($query);
+$statement->bindValue(':type', $type);
+$statement->bindValue(':brand', $brand);
+
+$statement->execute();
+
+if ($statement->rowCount() === 0) {
+    http_response_code(400);
+    echo json_encode(['error' => "$type : This type doesn't exist."]);
+    exit;
+}
+
+
 // No product with this price
 $command = $price[0];
 // Take the price without the command
 $price = substr($price, 1);
 // Query
 $query = <<<SQL
-    SELECT * FROM ajax_products.products WHERE price $command :price
+    SELECT * FROM ajax_products.products WHERE price $command :price and type = :type and brand = :brand
 SQL;
 
 $statement = $conn->prepare($query);
 $statement->bindValue(':price', $price);
+$statement->bindValue(':type', $type);
+$statement->bindValue(':brand', $brand);
+
 
 $statement->execute();
 
@@ -153,11 +160,15 @@ if ($statement->rowCount() === 0) {
 
 // sorry, we don’t have enough stock, we only have $stock in stock.
 $query = <<<SQL
-    SELECT * FROM ajax_products.products WHERE stock >= :number
+    SELECT * FROM ajax_products.products WHERE stock >= :number and type = :type and brand = :brand and price $command :price
 SQL;
 
 $statement = $conn->prepare($query);
 $statement->bindValue(':number', $number);
+$statement->bindValue(':type', $type);
+$statement->bindValue(':brand', $brand);
+$statement->bindValue(':price', $price);
+
 
 $statement->execute();
 
@@ -166,3 +177,20 @@ if ($statement->rowCount() === 0) {
     echo json_encode(['error' => "$number : Sorry, we don’t have enough stock, we only have $stock in stock."]);
     exit;
 }
+
+// Final request
+$query = <<<SQL
+    SELECT * FROM ajax_products.products WHERE type = :type AND brand = :brand AND price $command :price AND stock >= :number
+SQL;
+
+$statement = $conn->prepare($query);
+$statement->bindValue(':type', $type);
+$statement->bindValue(':brand', $brand);
+$statement->bindValue(':price', $price);
+$statement->bindValue(':number', $number);
+
+$statement->execute();
+
+$products = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+echo json_encode(["success" => true, $products], JSON_PRETTY_PRINT);
