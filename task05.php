@@ -119,7 +119,24 @@ if ($statement->rowCount() === 0) {
 
 // This type doesn't exist in our shpp
 $query = <<<SQL
+    SELECT * FROM ajax_products.products WHERE type = :type
+SQL;
+
+$statement = $conn->prepare($query);
+$statement->bindValue(':type', $type);
+
+$statement->execute();
+
+if ($statement->rowCount() === 0) {
+    http_response_code(400);
+    echo json_encode(['error' => "$type : This type doesn't exist in our shop."]);
+    exit;
+}
+
+// This type does'nt exist for this brand
+$query = <<<SQL
     SELECT * FROM ajax_products.products WHERE type = :type and brand = :brand
+
 SQL;
 
 $statement = $conn->prepare($query);
@@ -130,10 +147,9 @@ $statement->execute();
 
 if ($statement->rowCount() === 0) {
     http_response_code(400);
-    echo json_encode(['error' => "$type : This type doesn't exist."]);
+    echo json_encode(['error' => "$type : This type doesn't exist for $brand."]);
     exit;
 }
-
 
 // No product with this price
 $command = $price[0];
@@ -174,7 +190,24 @@ $statement->execute();
 
 if ($statement->rowCount() === 0) {
     http_response_code(400);
-    echo json_encode(['error' => "$number : Sorry, we don’t have enough stock, we only have $stock in stock."]);
+    // Check the stock for the product
+    $query = <<<SQL
+        SELECT * FROM ajax_products.products WHERE type = :type and brand = :brand and price $command :price
+    SQL;
+
+    $statement = $conn->prepare($query);
+
+    $statement->bindValue(':type', $type);
+    $statement->bindValue(':brand', $brand);
+    $statement->bindValue(':price', $price);
+
+    $statement->execute();
+
+    $statement = $statement->fetch(PDO::FETCH_ASSOC);
+
+    http_response_code(400);
+
+    echo json_encode(['error' => "$number : Sorry, we don’t have enough stock, we only have " . (string)$statement["stock"] .  " in stock."]);
     exit;
 }
 
