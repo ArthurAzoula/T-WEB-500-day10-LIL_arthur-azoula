@@ -77,10 +77,10 @@ setInterval(() => {
                     <div class="message">
                         <div class="message-header">
                             <span class="message-username">${message.name}</span>
-                            <span class="message-timestamp">${message.timestamp}</span>
+                            <span class="message-timestamp">${formatDate(message.timestamp)}</span>
                         </div>
                         <div class="message-body">
-                            <p class="message-text">${message.message}</p>
+                            <p class="message-text text-left">${message.message}</p>
                         </div>
                     </div>
                 `;
@@ -105,3 +105,26 @@ clear.addEventListener('click', () => {
             }
         });
 });
+
+const formatDate = (date) => {
+    // 1. Create a new Date object
+    const newDate = new Date(date);
+
+    // 2. Get the day, month and year
+    const day = newDate.getDate();
+
+    // 3. Get the month
+    let month = newDate.getMonth() + 1;
+
+    // 4. Get the year
+    const year = newDate.getFullYear();
+
+    // 5. Get the hours, minutes and seconds
+    const hours = newDate.getHours();
+    const minutes = newDate.getMinutes();
+    const seconds = newDate.getSeconds();
+
+    // 6. Format the date
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+
+}
