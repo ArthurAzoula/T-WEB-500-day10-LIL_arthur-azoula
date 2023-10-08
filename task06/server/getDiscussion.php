@@ -33,6 +33,6 @@ if ($statement->rowCount() > 0) {
 } else {
     echo json_encode([
         'status' => 'error',
-        'message' => 'Messages not get'
+        'message' => 'Conversation is empty ! Start a new one !'
     ]);
 }

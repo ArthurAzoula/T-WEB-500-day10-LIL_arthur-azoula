@@ -210,7 +210,7 @@ form.addEventListener('submit', (e) => {
                                     <td>${product.type}</td>
                                     <td>${product.brand}</td>
                                     <td>${product.price}</td>
-                                    <td>${product.id}</td>
+                                    <td>${number.value}</td>
                                     <td>${product.stock}</td>
                                 </tr>
                             </tbody>

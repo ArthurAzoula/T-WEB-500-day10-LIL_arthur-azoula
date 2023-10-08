@@ -64,6 +64,7 @@ setInterval(() => {
             chat.innerHTML = '';
 
             if (data.status === 'error') {
+                // add the error message to the chat
                 chat.innerHTML = data.message;
                 return;
             }
